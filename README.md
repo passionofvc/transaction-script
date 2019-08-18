@@ -1,3 +1,4 @@
-# bitbox-script
-some bitcoin-cash script with bitbox-js lib
+# transaction-script
+bitcoin tx script
+bitcoin-cash tx script
 
