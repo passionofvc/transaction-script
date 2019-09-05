@@ -28,7 +28,7 @@ const btc_testnet = {
 
 
 function getUtxos(address, key, to, callbackData) {
-    https.get('https://chain.so/api/v2/get_tx_unspent/BTCTEST/'+address, (resp) => {
+    https.get('https://blockstream.info/testnet/api/address/'+address+'/utxo', (resp) => {
         let data = '';
 
         // A chunk of data has been recieved.
@@ -39,7 +39,7 @@ function getUtxos(address, key, to, callbackData) {
         // The whole response has been received. Print out the result.
         resp.on('end', () => {
           //console.log(JSON.parse(data).data.txs)
-          callbackData(JSON.parse(data).data.txs, address, key, to)
+          callbackData(JSON.parse(data), address, key, to)
         });
     }).on("error", (err) => {
       console.log("Error: " + err.message);
@@ -47,14 +47,16 @@ function getUtxos(address, key, to, callbackData) {
 }
 
 function processUtxos(jsonUtxos, fromAddress, key, to){
+    if (jsonUtxos.length <=0 ) return;
+
     let txb = new bitcoin.TransactionBuilder(btc_testnet)
     let inputsValue = 0
     let destAddress = to
     //inputs
     jsonUtxos.forEach( input => {
         console.log('input',input)
-        inputsValue += input.value*100000000
-        txb.addInput(input.txid, input.output_no)
+        inputsValue += input.value
+        txb.addInput(input.txid, input.vout)
     })
 
     //outputs
@@ -86,13 +88,13 @@ function processUtxos(jsonUtxos, fromAddress, key, to){
             vin: j,
             keyPair: keyPair,
             redeemScript: p2sh.redeem.output,
-            witnessValue: jsonUtxos[j].value*100000000,
+            witnessValue: jsonUtxos[j].value,
         });
     }
 
     const tx = txb.build()
     console.log( tx.toHex() )
-    return;
+    //return;
 
     insight.broadcast(tx.toHex(), function(error, returnedTxId) {
         if (error) {
