@@ -34,7 +34,7 @@ const btc_mainnet = {
 const testnet = btc_testnet
 //const testnet = btc_mainnet
 
-key='cUQZd5T79bsGq1iX8v8CGHckEvFhZiqQMbBkp6dSzvXkTAggp2FQ'
+key='cU39grwS4qnPy3aucTSqq3bdduJacNf5bfCo9ThsWgFToVuk54vJ'
 let keyPair = bitcoin.ECPair.fromWIF(key, testnet)
 let p2wpkh = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network:testnet })
 let p2sh = bitcoin.payments.p2sh({ redeem: p2wpkh, network:testnet })
